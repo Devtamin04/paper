@@ -1,0 +1,96 @@
+%% statlm_paper_en.tex
+%% IEEE Conference paper (IEEEtran) -- English version
+%% Topic: StatLM -- Zero-shot Multi-Label Vietnamese Text Classification
+%%
+%% COMPILATION (matches the bundled IEEE conference template toolchain):
+%%   pdflatex statlm_paper_en
+%%   bibtex   statlm_paper_en
+%%   pdflatex statlm_paper_en
+%%   pdflatex statlm_paper_en
+%% Requires: IEEEtran.cls, IEEEtran.bst and the vntex package (T5 fonts) so that
+%% the embedded Vietnamese example labels (e.g., "Giao duc", "Y te") render under
+%% pdflatex. If vntex/T5 is unavailable, compile with XeLaTeX/LuaLaTeX and replace
+%% the two font lines below with:
+%%   \usepackage{fontspec}\setmainfont{TeX Gyre Termes}
+
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If
+% that is unneeded, please comment it out.
+
+% ---- Unicode + Vietnamese-capable fonts (for the Vietnamese example labels) ----
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+
+% ---- Math, tables, figures, citations ----
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\interdisplaylinepenalty=2500
+\hyphenation{em-bed-ding key-phrase}
+
+\usepackage[hidelinks]{hyperref}
+
+\begin{document}
+
+\title{StatLM: A Hybrid Pipeline for Zero-shot\\
+Vietnamese Multi-Label Text Classification}
+
+\author{\IEEEauthorblockN{Tuan Nguyen-Quang}
+\IEEEauthorblockA{\textit{VNU - University of Engineering and Technology} \\
+Hanoi, Vietnam \\
+nqtuan.code@gmail.com}
+\and
+\IEEEauthorblockN{Trinh Le-Khanh\textsuperscript{*}}
+\IEEEauthorblockA{\textit{VNU - University of Engineering and Technology} \\
+Hanoi, Vietnam \\
+trinhlk@vnu.edu.vn}
+\thanks{*Corresponding author: Trinh Le-Khanh (e-mail: trinhlk@vnu.edu.vn)}
+
+}
+
+\maketitle
+
+\begin{abstract}
+The rapid growth of digital documents has increased the need for scalable document organization across languages and domains.
+Open-world zero-shot multi-label text classification is challenging because neither the label space nor the document-level labels are specified in advance, and task-specific labeled data are unavailable. Existing approaches typically trade off label-space quality, large language model (LLM) usage, and processing time. This paper presents \textbf{StatLM}, a hybrid pipeline that combines a statistical encoder with an LLM decoder. The encoder first applies extractive TextRank using Vietnamese sentence embeddings and then uses KeyBERT with an asymmetric retrieval model to represent each document by a compact set of keyphrases. The LLM is invoked only at the final decoder stage to construct and normalize the label space and to assign labels. On a balanced VietnamNet corpus of 2{,}000 articles from 20 categories, StatLM increases the coarse-label ratio from 32.6\% to 76.9\%, reduces the noise-label ratio from 39.1\% to 3.8\%, and covers 19 of 20 categories, compared with 15 of 20 for X-MLClass-Gemini, our full-LLM baseline that follows the X-MLClass pipeline with Gemini 2.5 Flash as the backbone. StatLM also reduces the mean processing time from 40 to 10 seconds per document, uses approximately $30$ times fewer LLM tokens, and requires one API call rather than approximately eight. These results indicate that statistical noise reduction and content condensation before LLM-based label generation provide a favorable quality, efficiency trade-off for resource-constrained deployment.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Coarse labeling, hybrid pipeline, KeyBERT, large language model, statistical
+encoder, StatLM, TextRank, Vietnamese natural language processing, zero-shot
+multi-label text classification.
+\end{IEEEkeywords}
+
+\input{sections/en/01-introduction}
+
+\input{sections/en/02-related-work}
+
+\input{sections/en/03-method}
+
+\input{sections/en/04-experimental-setup}
+
+\input{sections/en/05-results}
+
+\input{sections/en/06-conclusion}
+
+\input{sections/en/07-acknowledgment}
+
+% ============================================================
+% References: BibTeX with the IEEEtran style
+% ============================================================
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

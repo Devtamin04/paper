@@ -1,0 +1,43 @@
+% ============================================================
+\section{Introduction}
+% ============================================================
+The volume of Vietnamese digital text from online news, electronic commerce,
+social media, and academic repositories continues to grow, making manual document
+organization increasingly difficult. This study considers \emph{open-world
+zero-shot multi-label text classification}, in which a system must infer the label
+space and assign one or more labels to each document without task-specific labeled
+data or a predefined label inventory~\cite{li2024open}. In this setting, the label
+space may be expanded as additional document batches are processed. Such a capability is relevant to document collections for which a fixed taxonomy is unavailable or expensive to maintain.
+Existing methods can be broadly grouped into three categories~\cite{li2024open}.
+Supervised classifiers can achieve high predictive accuracy when a complete label
+set and sufficient labeled examples are available, but these assumptions do not
+hold in the target setting. Direct LLM-based methods can generate labels from raw
+text without task-specific training, but repeated processing of long documents
+increases token usage and latency and may produce entity-level or overly specific
+labels. Statistical methods, including topic modeling and keyphrase extraction,
+are computationally efficient but generally return topics or phrases rather than a
+normalized, human-readable multi-label taxonomy. These limitations motivate a
+method that combines statistical filtering with LLM-based semantic generalization.
+
+We propose \emph{StatLM}, a pipeline comprising a statistical encoder and an LLM
+decoder. The encoder removes low-centrality content and represents each document by
+a compact, diverse set of keyphrases. The decoder then uses these representations
+to discover, normalize, and assign coarse-grained labels. Restricting LLM processing to the final stage is intended to retain the semantic flexibility of generative models while reducing exposure to raw-text noise and limiting API usage.
+
+The contributions of this work are as follows. First, we formulate a
+hybrid encoder-decoder architecture for open-world zero-shot multi-label
+classification and position it relative to supervised, statistical, and direct
+LLM-based alternatives. Second, we develop a Vietnamese processing pipeline that
+uses embedding-based TextRank for extractive summarization and configures KeyBERT
+with an asymmetric retrieval model for keyphrase extraction. Third, we construct
+and release a balanced VietnamNet corpus and evaluate the proposed pipeline at the
+summarization, keyphrase-extraction, label-space, classification, and computational
+levels against statistical baselines and an X-MLClass-based full-LLM baseline.
+
+The remainder of this paper is organized as follows. Section~\ref{sec:related}
+reviews the relevant methods and Vietnamese language resources.
+Section~\ref{sec:method} describes the StatLM architecture, and
+Section~\ref{sec:setup} presents the dataset, baselines, and evaluation protocol.
+Section~\ref{sec:results} reports and discusses the experimental results.
+Section~\ref{sec:conclusion} summarizes the findings, limitations, and directions
+for future work.

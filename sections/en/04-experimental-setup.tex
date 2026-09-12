@@ -1,0 +1,31 @@
+% ============================================================
+\section{Experimental Setup}
+\label{sec:setup}
+% ============================================================
+Experiments use the \emph{VietnamNet} dataset: 2{,}000 news articles evenly spread over 20 categories (100 each), each 500--800 words with a title, lead paragraph (\emph{sapo}), and keyphrase list. All three tasks are evaluated on the full corpus. References differ by task: title + sapo for summarization; an LLM-generated keyphrase list (DeepSeek~V4) for keyphrase extraction~\cite{pavlovic2024effectiveness}; and the 20 original categories as a coarse-label proxy, because no absolute label-space ground truth exists~\cite{wan2024tnt}.
+
+All runs use a personal machine (12th-generation Intel Core i7, 16~GB RAM, no GPU); embeddings run on CPU through \texttt{sentence-transformers}, and the LLM through the Google API. Fixed parameters are: Layer~1 $d=0.85$, $\varepsilon=10^{-5}$, 40\% retention (minimum five sentences); Layer~2 one-to-three-word n-grams, $m=10$, $\lambda=0.5$; and Layer~3 \texttt{gemini-2.5-flash} with temperature 0.1 for classification and 0.3 for label generation, sending at most five keyphrases per document.
+
+
+\emph{Baselines.} Summarization uses Lead-$K$, word-overlap TextRank, and
+TextRank+TF--IDF. Keyphrase baselines are RAKE, YAKE, TextRank-keywords, TopicRank,
+MultipartiteRank, WordAttractionRank, and KeyBERT with a symmetric embedding. The
+end-to-end \emph{X-MLClass-Gemini} baseline follows X-MLClass~\cite{li2024open} using
+50-token chunks, four keyphrases per chunk, BERTopic, NLI entailment, and ten
+long-tail iterations. We denote the adapted baseline as X-MLClass-Gemini because it
+follows the X-MLClass pipeline while replacing the original LLM with Gemini 2.5 Flash
+for backbone comparability.
+
+\emph{Metrics.} Summarization uses ROUGE-1/2/L F1. Keyphrase extraction uses
+precision, recall, and F1 at $k=5$ and 10 with exact or soft matching
+(cosine $\geq0.7$). Discovered labels are classified as Coarse, Long-tail, Entity,
+Meta/Noise, or Cross-topic, yielding the Coarse ratio, Noise ratio, and category
+coverage. End-to-end ranking is measured by
+\begin{equation}
+P@k = \frac{1}{N}\sum_{i=1}^{N}
+\frac{\lvert C_i^{rk}\cap L_i\rvert}{\min(k,\lvert L_i\rvert)},
+\label{eq:pak}
+\end{equation}
+where $C_i^{rk}$ is the top-$k$ prediction and $L_i$ is the reference set. Since
+$\lvert L_i\rvert=1$, the measure reduces to top-$k$ accuracy under this proxy.
+

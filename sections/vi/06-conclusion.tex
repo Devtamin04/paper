@@ -1,0 +1,25 @@
+% ============================================================
+\section{Kết luận}
+% ============================================================
+Bài báo đề xuất \textbf{StatLM}, một pipeline encoder--decoder cho bài toán phân
+loại văn bản đa nhãn zero-shot trong môi trường thế giới mở cho tiếng Việt. Bằng
+cách giao việc giảm nhiễu và cô đặc thông tin cho encoder thống kê (TextRank trên
+sentence embedding, KeyBERT với embedding bất đối xứng) và chỉ huy động LLM một lần ở
+decoder, StatLM cân bằng chất lượng, chi phí và tốc độ: so với baseline X-MLClass-Gemini dùng
+LLM toàn phần, nó nâng tỉ lệ nhãn thô lên 76,9\%, hạ nhiễu xuống 3,8\%, phủ 19/20
+chuyên mục, và giảm token cùng thời gian khoảng $30\times$ và $4\times$.
+
+\textbf{Hạn chế.} Chất lượng phụ thuộc dây chuyền vào hai tầng encoder; chi phí xây
+đồ thị tăng $O(n^2)$ với văn bản rất dài; đầu ra LLM còn dao động nhẹ giữa các lần
+chạy; và tham chiếu keyphrase là LLM-proxy chứ chưa phải ground-truth do người gán.
+Chuỗi xử lý cũng là vòng hở: một chủ đề phụ chỉ nằm trong vài câu có độ trung tâm
+thấp có thể bị bỏ mà không được khôi phục---một rủi ro \emph{được cơ chế dự đoán}
+dưới benchmark một nhãn vàng ($|L_i|=1$), mà để định lượng cần một tập con đa nhãn do
+người gán.
+
+\textbf{Hướng phát triển.} Tích hợp thông tin vị trí câu và cấu trúc văn bản vào đồ
+thị; mở rộng sang các miền khác và xây dựng bộ dữ liệu keyphrase tiếng Việt gán nhãn
+thủ công; và bổ sung cơ chế dự phòng dựa trên độ tin cậy, đưa lại toàn văn vào khâu
+trích keyphrase khi độ phủ bản tóm tắt hoặc độ tin cậy gán nhãn thấp, khép một phần
+vòng lặp hiện hở.
+

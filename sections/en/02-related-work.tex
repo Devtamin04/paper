@@ -1,0 +1,49 @@
+% ============================================================
+\section{Background and Related Work}
+\label{sec:related}
+% ============================================================
+
+\subsection{Graph-Based Extractive Summarization}
+Extractive summarization preserves source wording and requires no summary-specific
+training data. Graph-based methods represent sentences as nodes and their relations
+as weighted edges, then estimate sentence importance from the graph structure.
+TextRank applies PageRank to this representation~\cite{mihalcea2004textrank}, but
+its performance depends on the edge-weight function. Word overlap and variants
+based on TF-IDF, LexRank, BM25+, or LDA-extended TextRank primarily capture lexical
+relations~\cite{vora2024extractive}. Sentence embeddings instead model semantic
+similarity between lexically different sentences~\cite{kadriu2021extractive}.
+
+\subsection{Keyphrase Extraction}
+Unsupervised keyphrase extraction includes statistical methods such as RAKE
+~\cite{rose2010automatic} and YAKE~\cite{campos2020yake}; graph-based methods such
+as TextRank~\cite{mihalcea2004textrank}, TopicRank~\cite{bougouin2013topicrank},
+MultipartiteRank~\cite{boudin2018unsupervised}, and WordAttractionRank
+~\cite{wang2014corpus}; and embedding-based methods. KeyBERT
+~\cite{grootendorst2020keybert} ranks candidate n-grams by cosine similarity to the
+document and can apply maximal marginal relevance (MMR)~\cite{carbonell1998use} to
+reduce redundancy. Here, matching a short phrase to a document summary is an
+asymmetric retrieval task; a retrieval-oriented embedding model is therefore more
+appropriate than one optimized only for symmetric semantic textual similarity
+(STS).
+
+\subsection{Label-Space Discovery}
+Label-space discovery has used topic models, embedding-and-clustering methods, and
+LLM-assisted topic naming. Many such pipelines assume a fixed topic count or a
+single dominant topic per document. X-MLClass~\cite{li2024open} uses an LLM for
+chunking, keyphrase generation, clustering, and iterative rare-label discovery.
+However, repeated raw-text processing increases token usage and latency and may
+produce entity-level or journalistic labels on news data. StatLM instead places a
+statistical encoder before the LLM so that label discovery operates on condensed
+keyphrases.
+
+\subsection{Vietnamese Processing Resources}
+StatLM uses pyvi~\cite{pyvi} for word segmentation and VnCoreNLP
+~\cite{vu2018vncorenlp} for segmentation, part-of-speech (POS) tagging, and
+named-entity recognition (NER). The encoder models are matched to their tasks
+(Table~\ref{tab:emb}). \emph{dangvantuan/vietnamese-embedding}
+~\cite{dangvantuan2021vietnamese}, a Sentence-BERT model
+~\cite{reimers2019sentence} based on PhoBERT~\cite{nguyen2020phobert}, is optimized
+for symmetric STS and reports Pearson 84.21 on \emph{vi-stsbenchmark}.
+\emph{bkai-foundation-models/vietnamese-bi-encoder}
+~\cite{nguyen2025improving} is trained for asymmetric retrieval and is reported to
+rank first on the Vietnamese VCS benchmark.

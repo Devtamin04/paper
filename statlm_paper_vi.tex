@@ -1,0 +1,109 @@
+%% statlm_paper_vi.tex
+%% Bài báo theo định dạng IEEE Conference (IEEEtran) -- bản tiếng Việt
+%% Nội dung: StatLM - Phân loại văn bản đa nhãn tiếng Việt zero-shot
+%%
+%% HƯỚNG DẪN BIÊN DỊCH (khớp với toolchain của template IEEE conference đi kèm):
+%%   pdflatex statlm_paper_vi
+%%   bibtex   statlm_paper_vi
+%%   pdflatex statlm_paper_vi
+%%   pdflatex statlm_paper_vi
+%% Yêu cầu: IEEEtran.cls, IEEEtran.bst và gói vntex (cung cấp "vietnam"/babel
+%% tiếng Việt). Nếu môi trường không có vntex, có thể chuyển sang XeLaTeX và thay
+%% khối font tiếng Việt bằng fontspec.
+
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% Dòng trên chỉ cần khi khai báo nguồn tài trợ ở footnote đầu tiên. Nếu không có,
+% có thể comment lại.
+
+% ---- Tiếng Việt (pdflatex + vntex) ----
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[utf8]{vietnam}
+
+% ---- Toán, bảng, hình, trích dẫn ----
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{url}
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\interdisplaylinepenalty=2500
+\hyphenation{em-bed-ding key-phrase}
+
+\begin{document}
+
+\title{StatLM: Pipeline Lai cho Phân loại Văn bản\\
+Đa nhãn Tiếng Việt theo hướng Zero-shot}
+
+\author{\IEEEauthorblockN{1\textsuperscript{st} Nguyễn Quang Tuấn}
+\IEEEauthorblockA{\textit{Trường Đại học Công nghệ} \\
+\textit{Đại học Quốc gia Hà Nội} \\
+Hà Nội, Việt Nam \\
+nqtuan.code@gmail.com}
+\and
+\IEEEauthorblockN{2\textsuperscript{nd} Lê Khánh Trình}
+\IEEEauthorblockA{\textit{Trường Đại học Công nghệ} \\
+\textit{Đại học Quốc gia Hà Nội} \\
+Hà Nội, Việt Nam \\
+trinhlk@vnu.edu.vn}
+}
+
+\maketitle
+
+\begin{abstract}
+Trong bối cảnh bùng nổ dữ liệu số, nhu cầu tự động tổ chức và phân loại văn bản
+ngày càng cấp thiết. Đây là một bài toán khó -- không gian nhãn và danh mục của
+mỗi văn bản phải được khám phá mà không cần dữ liệu gán nhãn theo tác vụ -- và
+các phương pháp hiện tại vẫn phải đánh đổi giữa chất lượng nhãn, chi phí gọi mô
+hình ngôn ngữ lớn (LLM) và tốc độ xử lý. Bài báo đề xuất \textbf{StatLM}, một
+kiến trúc lai (hybrid) kết hợp encoder thống kê và decoder mô hình ngôn ngữ lớn,
+hướng tới phân loại văn bản đa nhãn zero-shot trong môi trường thế giới mở. Phần encoder dùng tóm tắt trích xuất TextRank
+(trên nền sentence embedding tiếng Việt) để giảm nhiễu, sau đó dùng KeyBERT với
+mô hình embedding bất đối xứng để cô đặc thông tin thành cụm từ khóa; phần
+decoder chỉ huy động LLM đúng một lần ở khâu cuối để đặt tên và chuẩn hóa không
+gian nhãn. Thực nghiệm trên bộ dữ liệu báo chí VietnamNet (2.000 bài, 20 chuyên
+mục) cho thấy so với baseline X-MLClass-Gemini (cài đặt X-MLClass dùng LLM toàn
+phần với backbone Gemini 2.5 Flash), StatLM nâng tỉ lệ nhãn thô (coarse) từ 32,6\% lên 76,9\%, hạ tỉ lệ nhãn
+nhiễu từ 39,1\% xuống 3,8\%, và phủ 19/20 chuyên mục (so với 15/20). Về hiệu
+năng, StatLM giảm thời gian xử lý trung bình từ 40 xuống 10 giây/bài, tiêu thụ
+token LLM ít hơn khoảng 30 lần và chỉ gọi API một lần thay vì tám lần. Kết quả
+khẳng định triết lý ``làm sạch trước, khái quát sau'' là một giải pháp hiệu quả,
+cân bằng và phù hợp cho điều kiện tài nguyên hạn chế.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Encoder thống kê, gán nhãn thô (coarse labeling), KeyBERT, mô hình ngôn ngữ lớn,
+phân loại văn bản đa nhãn zero-shot, pipeline lai (hybrid), StatLM, TextRank, xử
+lý ngôn ngữ tự nhiên tiếng Việt.
+\end{IEEEkeywords}
+
+\input{sections/vi/01-introduction}
+
+\input{sections/vi/02-related-work}
+
+\input{sections/vi/03-method}
+
+\input{sections/vi/04-experimental-setup}
+
+\input{sections/vi/05-results}
+
+\input{sections/vi/06-conclusion}
+
+\input{sections/vi/07-acknowledgment}
+
+% ============================================================
+% Tài liệu tham khảo: dùng BibTeX với style IEEEtran
+% ============================================================
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

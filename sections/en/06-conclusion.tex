@@ -1,0 +1,42 @@
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+% ============================================================
+This paper presented StatLM, a hybrid pipeline for open-world zero-shot multi-label
+classification of Vietnamese text. Embedding-based TextRank and asymmetric
+KeyBERT condense each document before an LLM constructs and assigns labels. On the
+VietnamNet corpus, StatLM achieved a 76.9\% Coarse ratio, a 3.8\% Noise ratio, and
+coverage of 19 of 20 categories. Relative to the X-MLClass-Gemini baseline,
+it reduced mean processing time by approximately $4$ times, LLM token usage by
+approximately $30$ times, and API calls from approximately eight to one.
+
+The results indicate complementary roles for the statistical encoder and generative
+decoder: the encoder controls retention and redundancy, while the decoder maps the
+compact representations to a normalized label space. However, omitted information
+cannot be recovered downstream, the complete sentence graph requires $O(n^2)$
+pairwise similarities, and LLM outputs may vary across runs. The evaluation also
+uses an LLM-generated keyphrase reference and one editorial category per article for several component variants. The reported latency and token
+counts were obtained under one hardware and API configuration and do not constitute
+a platform-independent cost model. These factors, together with the news-only corpus
+and Vietnamese-specific resources, limit internal and external validity.
+The study therefore does not claim universal superiority over full-LLM pipelines. Its balanced news corpus and language-specific resources limit transfer, while the LLM-generated reference and the limited number of ablation runs may introduce bias and warrant confirmation through additional complete runs.
+
+
+
+Future work will incorporate structural cues into the sentence graph and evaluate
+the method in additional domains. We will also develop human-annotated Vietnamese
+benchmarks for keyphrase extraction and multi-label classification. Complete
+component ablations and repeated LLM runs will be used to report variance and
+statistical uncertainty. A confidence-based fallback will reintroduce the full
+document when encoder coverage or decoder confidence is insufficient, reducing the
+open-loop behavior of the current cascade.
+
+% We proposed \emph{StatLM}, an encoder-decoder pipeline for zero-shot multi-label text classification in an open-world Vietnamese setting. By delegating noise reduction and condensation to a statistical encoder (TextRank over sentence embeddings and KeyBERT with asymmetric embedding) and invoking the LLM only once at the decoder, StatLM balances quality, cost, and speed: against the full-LLM X-MLClass-Gemini baseline it reaches a 76.9\% coarse-label ratio, 3.8\% noise, 19/20 categories, about $30$ times fewer tokens, and about $4\times$ less time.
+
+% Beyond the aggregate scores, the central finding is a division of labor: statistical stages constrain, rather than replace, semantic generalization. Their inspectable sentences and keyphrases provide control over retention, redundancy, and fallback behavior before label generation.
+
+% Limitations include chained dependence on the two encoder layers; $O(n^2)$ graph construction for very long documents; slight LLM-output variation across runs; an LLM-generated rather than human-annotated keyphrase reference; and an open-loop cascade that may drop a secondary topic confined to a few low-centrality sentences. The latter is a mechanism-predicted risk under the single-gold-label benchmark ($\lvert L_i\rvert=1$) that requires a human-annotated multi-label subset to quantify.
+
+% The study therefore does not claim universal superiority over full-LLM pipelines. Its balanced news corpus and language-specific resources limit transfer, while the LLM-generated reference and the limited number of ablation runs may introduce bias and warrant confirmation through additional complete runs.
+
+% Future work will integrate sentence-position and document-structure cues into the graph, extend the method to other domains and build a human-annotated Vietnamese keyphrase dataset, and add a confidence-based fallback that re-admits the full document when summary coverage or decoder confidence is low, partially closing the open loop.

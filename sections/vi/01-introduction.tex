@@ -1,0 +1,56 @@
+% ============================================================
+\section{Giới thiệu}
+% ============================================================
+Sự bùng nổ của dữ liệu văn bản số tại Việt Nam -- từ báo điện
+tử, thương mại điện tử, mạng xã hội đến kho lưu trữ học thuật -- khiến việc tổ
+chức và phân loại thủ công ngày càng bất khả thi, đặt ra yêu cầu về các hệ thống
+tự động hóa. Trong số đó, \emph{phân loại văn bản đa
+nhãn zero-shot} (zero-shot multi-label text classification) trong môi trường thế
+giới mở nổi lên như một bài toán then chốt: hệ thống tự động xác định không gian
+nhãn (label space) và gán nhiều danh mục cho mỗi văn bản mà không cần bất kỳ dữ
+liệu gán nhãn theo tác vụ hay tập nhãn định trước nào~\cite{li2024open}. Ở đây,
+``thế giới mở'' (open-world) chỉ một môi trường động, nơi không gian nhãn không
+được định trước mà được khám phá và mở rộng dần khi các batch dữ liệu mới đến
+theo thời gian.
+
+Một tình huống thực tế điển hình đến từ các công cụ quản lý tri thức cá nhân như
+NotebookLM: người dùng tải lên hàng loạt tài liệu nhưng thiếu cơ chế tự động
+phân cụm và phân cấp, buộc phải quản lý thủ công bằng thư mục hoặc đánh dấu chọn,
+gây bất tiện khi số lượng tài liệu lớn.
+
+Các hướng tiếp cận hiện có cho bài toán
+này có thể chia thành ba nhóm~\cite{li2024open}. \emph{Thứ nhất}, học có giám sát
+truyền thống cho độ chính xác cao nhưng cần tập nhãn đầy đủ và dữ liệu gán nhãn
+-- trái với giả định không nhãn. \emph{Thứ hai}, dùng LLM để sinh nhãn trực tiếp
+trên văn bản thô: linh hoạt nhưng chi phí gọi API rất lớn và dễ sinh nhãn nhiễu
+do hạn chế cửa sổ ngữ cảnh. \emph{Thứ ba}, các phương pháp thống kê (mô hình chủ
+đề, trích xuất từ khóa): nhanh, nhẹ, chi phí thấp nhưng chỉ trả về từ/cụm từ rời
+rạc, thiếu tính khái quát để làm tên nhãn.
+
+Từ đó nổi lên một khoảng trống rõ rệt: cần một giải pháp dung hòa được
+\emph{chất lượng}, \emph{chi phí} và \emph{tốc độ}, đặc biệt cho tiếng Việt --
+ngôn ngữ đơn lập, giàu từ đồng nghĩa và chưa được tối ưu tốt bởi các mô hình đa
+ngữ. Bài báo này đề xuất \textbf{StatLM} (\emph{Statistical Encoder -- Language
+Model Decoder}), một kiến trúc pipeline tách biệt vai trò giữa thành phần thống
+kê và LLM. Ý tưởng cốt lõi: một \emph{encoder thống kê} đảm nhiệm giảm nhiễu và
+cô đặc thông tin cốt lõi từ văn bản thô, trong khi \emph{decoder LLM} chỉ được
+huy động tập trung một lần ở khâu đặt tên nhãn cuối cùng. Sự phân tách này cho
+phép StatLM tận dụng đồng thời tốc độ của kỹ thuật thống kê và sức mạnh khái quát
+hóa ngữ nghĩa của LLM.
+
+Bài báo đặt ra ba câu hỏi nghiên cứu. \textbf{RQ1:} Những hạn chế nào tồn tại
+trong các phương pháp phân loại đa nhãn zero-shot hiện nay, và kiến trúc
+encoder--decoder khắc phục chúng ra sao? \textbf{RQ2:} Việc thay hàm tương đồng
+từ vựng của TextRank bằng sentence embedding và tùy chỉnh KeyBERT cho tiếng Việt
+cải thiện chất lượng tóm tắt và trích xuất keyphrase đến mức nào? \textbf{RQ3:}
+Với việc chỉ dùng LLM ở decoder, StatLM cân bằng giữa chất lượng không gian nhãn,
+chi phí và tốc độ ra sao so với hướng dùng LLM toàn phần?
+
+\textbf{Đóng góp.} (i) Hệ thống hóa hạn chế của ba nhóm phương pháp và định vị
+khoảng trống nghiên cứu, từ đó đề xuất kiến trúc encoder--decoder. (ii) Thiết kế
+và triển khai pipeline StatLM hoàn chỉnh cho tiếng Việt, trong đó từng tầng được
+lựa chọn công nghệ một cách có nguyên lý (thay hàm tương đồng của TextRank, cấu
+hình KeyBERT bất đối xứng). (iii) Xây dựng và công bố công khai bộ dữ liệu
+VietnamNet, cùng đánh giá thực nghiệm định lượng và định tính chứng minh hiệu quả
+của giải pháp.
+

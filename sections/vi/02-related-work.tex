@@ -1,0 +1,63 @@
+% ============================================================
+\section{Nền tảng và Nghiên cứu liên quan}
+\label{sec:related}
+% ============================================================
+
+\subsection{Tóm tắt văn bản trích xuất dựa trên đồ thị}
+Tóm tắt văn bản tự động rút gọn văn bản gốc nhưng vẫn bảo toàn thông tin cốt
+lõi. So với tóm tắt tóm lược (abstractive), tóm tắt trích
+xuất (extractive) có ưu thế về tốc độ, tính trung thực và không cần dữ liệu huấn
+luyện -- những yếu tố then chốt trong bối cảnh không giám sát và tránh ``ảo
+giác'' (hallucination). Trong họ
+trích xuất, hướng dựa trên đồ thị mô hình hóa văn bản thành mạng lưới câu và đánh
+giá tầm quan trọng dựa trên cấu trúc toàn cục, không cần huấn luyện. TextRank áp
+dụng PageRank vào miền văn bản và được
+dùng rộng rãi~\cite{mihalcea2004textrank}, nhưng chất lượng phụ thuộc vào hàm đo
+độ tương đồng. Phiên bản gốc dùng Word Overlap chỉ phản ánh tương đồng bề mặt từ
+vựng; nhiều cải tiến đã được đề xuất (TF-IDF, LexRank, BM25+, và TextRank mở
+rộng kết hợp LDA với hệ số giảm chấn điều chỉnh động~\cite{vora2024extractive}) song
+vẫn giới hạn ở đặc trưng từ vựng.
+Các nghiên cứu khuyến nghị chuyển sang sentence embedding để nắm bắt ngữ nghĩa
+sâu hơn~\cite{kadriu2021extractive}.
+
+\subsection{Trích xuất cụm từ khóa}
+Các phương pháp trích xuất keyphrase không giám sát chia thành ba
+nhóm. Nhóm \emph{thống kê} (TF-IDF, RAKE~\cite{rose2010automatic},
+YAKE~\cite{campos2020yake}) nhanh nhẹ nhưng không
+nắm bắt ngữ nghĩa. Nhóm \emph{đồ thị} (TextRank~\cite{mihalcea2004textrank},
+TopicRank~\cite{bougouin2013topicrank}, Multipartite~\cite{boudin2018unsupervised},
+WordAttractionRank~\cite{wang2014corpus}) cải thiện hơn nhưng thiếu cơ chế giảm
+trùng lặp ở mức ngữ nghĩa. Nhóm \emph{embedding} đưa cả văn bản và ứng viên vào
+cùng không gian vector: KeyBERT~\cite{grootendorst2020keybert} chọn các n-gram có
+độ tương đồng cosine cao nhất với văn bản và có thể tích hợp Maximal Marginal
+Relevance (MMR)~\cite{carbonell1998use} để tăng đa dạng. Một điểm mấu chốt là
+\emph{tính bất đối xứng} của bài toán KeyBERT: một bên là tài liệu dài, một bên
+là keyphrase rất ngắn; nếu mô hình embedding không được huấn luyện cho quan hệ
+``truy vấn ngắn -- tài liệu dài'', chất lượng sẽ không tối ưu.
+
+\subsection{Khám phá không gian nhãn}
+Mô hình hóa chủ đề trải qua ba thế hệ: (i) dựa trên ``túi từ'' như LDA, NMF;
+(ii) dựa trên embedding và phân cụm như Top2Vec, BERTopic; (iii) dùng LLM để
+sinh và đặt tên chủ đề như TopicGPT. Hạn chế chung là thiên về gán
+\emph{một} chủ đề cho mỗi văn bản, khó mở rộng sang kịch bản đa nhãn. Gần đây,
+X-MLClass~\cite{li2024open} khai thác LLM một cách có hệ thống để khám phá không
+gian nhãn đa nhãn (chia chunk, sinh keyphrase, phân cụm, lặp khám phá nhãn hiếm),
+đạt độ phủ vượt trội so với các phương pháp truyền thống trên nhiều benchmark
+tiếng Anh. Tuy nhiên, X-MLClass đòi hỏi LLM xử lý toàn bộ văn bản thô, dẫn đến
+chi phí token lớn, tốc độ chậm, và trên dữ liệu báo chí giàu thực thể dễ sinh
+nhãn nhiễu (entity, meta). StatLM kế thừa ý tưởng cốt lõi của X-MLClass nhưng đặt
+một encoder thống kê phía trước để lọc nhiễu và chỉ cho LLM làm việc với keyphrase
+đã được cô đặc.
+
+\subsection{Tài nguyên xử lý tiếng Việt}
+StatLM sử dụng hai công cụ tách từ tùy theo nhu cầu: \emph{pyvi}~\cite{pyvi} (nhẹ,
+chỉ tách từ) và \emph{VnCoreNLP}~\cite{vu2018vncorenlp} (đồng thời tách từ, gán
+nhãn từ loại và nhận dạng thực thể). Hai mô hình embedding chuyên biệt được dùng:
+\emph{dangvantuan/vietnamese-embedding}~\cite{dangvantuan2021vietnamese} -- một
+Sentence-BERT~\cite{reimers2019sentence} trên nền PhoBERT~\cite{nguyen2020phobert}
+tối ưu cho tương đồng ngữ nghĩa đối xứng (STS, Pearson 84,21 trên
+vi-stsbenchmark); và
+\emph{bkai-foundation-models/vietnamese-bi-encoder}~\cite{nguyen2025improving} --
+một Bi-Encoder huấn luyện cho truy xuất bất đối
+xứng, đứng đầu benchmark VCS tiếng Việt.
+
